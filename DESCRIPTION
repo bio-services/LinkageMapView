@@ -1,0 +1,19 @@
+Package: LinkageMapView
+Type: Package
+Title: Plot Linkage Group Maps with QTLs
+Version: 0.0.0.9000
+Authors@R: person("Lisa", "Ouellette", email = "louellet@uncc.edu", role = c("aut", "cre"))
+Description: LinkageMapView produces high resolution, publication ready linkage
+    maps and QTL maps. Input can be output from R/qtl, simple text or comma
+    delimited files. Output is currently a portable document file (pdf).
+License: GPL-3
+LazyData: TRUE
+Imports:
+    plotrix (>= 3.6-3),
+    grDevices,
+    graphics,
+    utils
+Suggests:
+    qtl (>= 1.39-5),
+    rmarkdown
+RoxygenNote: 5.0.1
