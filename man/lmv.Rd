@@ -202,7 +202,8 @@ lmv is the main function to produce linkage group maps and has many
 
 library(qtl)
 data(hyper)
-lmv(hyper,"hyper.pdf",mapthese=c(1,4,6,15))
+outfile = paste(tempdir(),"/hyper.pdf",sep="")
+lmv(hyper,outfile,mapthese=c(1,4,6,15))
 
 ## color some of the markers for emphasis
 
@@ -214,7 +215,9 @@ flist <- list()
 locus <- c("D1Mit123","D1Mit105","D6Mit273","D15Mit56","D15Mit156")
 col   <- c("red")
 flist[[1]] <- list(locus=locus,col=col)
-lmv(hyper,"hyperred.pdf",mapthese=c(1,4,6,15),markerformatlist=flist)
+
+outfile = paste(tempdir(),"/hyperred.pdf",sep="")
+lmv(hyper,outfile,mapthese=c(1,4,6,15),markerformatlist=flist)
 
 ## change some of the pdf options and chromosome color
 ## changing title color (col.main) to same as foreground pdf color
@@ -222,7 +225,8 @@ lmv(hyper,"hyperred.pdf",mapthese=c(1,4,6,15),markerformatlist=flist)
 library(qtl)
 data(hyper)
 
-lmv(hyper,"hyperlg.pdf",
+outfile = paste(tempdir(),"/hyperlg.pdf",sep="")
+lmv(hyper,outfile,
 mapthese=c(1,4,6,15),
 bg="black",fg="white",col.main="white",
 pdfheight=8,title="myhyper",lg.col="tan")
@@ -232,7 +236,8 @@ pdfheight=8,title="myhyper",lg.col="tan")
 library(qtl)
 data(hyper)
 
-lmv(hyper,"hypercol.pdf",mapthese=c(1,4,6,15),
+outfile = paste(tempdir(),"/hypercol.pdf",sep="")
+lmv(hyper,outfile,mapthese=c(1,4,6,15),
 lcol="blue",lfont=2,lcex=1.2,rcol="red",rfont=3,rcex=2)
 
 ## make a dataframe to pass sections of chr to col
@@ -249,7 +254,8 @@ e = c(94,47,21.9,13.1)
 col = c("pink","blue","blue","green")
 sectcoldf <-  data.frame(chr, s, e, col,stringsAsFactors = FALSE)
 
-lmv(hyper,"hyperruler.pdf",mapthese=c(1,4,6,15),
+outfile = paste(tempdir(),"/hyperruler.pdf",sep="")
+lmv(hyper,outfile,mapthese=c(1,4,6,15),
 ruler=TRUE,maxnbrcolsfordups = 1, sectcoldf=sectcoldf)
 
 ## plot qtls also out of a r/qtl scanone object
@@ -266,8 +272,9 @@ hyper <-
                stepwidth = "fixed")
 hyper.scanone <- scanone(hyper)
 
+outfile = paste(tempdir(),"/testrqtlhyper2.pdf",sep="")
 lmv(hyper,
-   "testrqtlhyper2.pdf",mapthese=c(1,4,6,7,15),
+   outfile, mapthese=c(1,4,6,7,15),
    qtlscanone = hyper.scanone,
    posonleft = c(TRUE,FALSE,TRUE,FALSE,TRUE))
 
@@ -308,10 +315,11 @@ locus <- c("P3", "P1", "Raa1")
 font  <- c(3)   #italic
 col <- c("red")
 flist[[3]] <- list(locus = locus, font = font, col = col)
-filename <- system.file("extdata", "carrot.csv", package="LinkageMapView")
+filename <- system.file("extdata", "Carrot.csv", package="LinkageMapView")
+outfile = paste(tempdir(),"/carrot.pdf",sep="")
 lmv(
   mapthis = filename,
-  outfile = "carrot.pdf",
+  outfile = outfile,
   ruler = TRUE,
   lgtitle = c("2170", "70349", "10117"),
   maxnbrcolsfordups = 1,
