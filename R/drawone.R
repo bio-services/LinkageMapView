@@ -5,13 +5,13 @@ drawone <-
            dim,
            totwidth,
            yrange,
+           denmap = FALSE,
            maxnbrcolsfordups = 3,
-           pdfwidth = 12,
+           pdf.width = 12,
+           pdf.fg = "black",
            lgw = 0.25,
            lg.col = NULL,
            lg.lwd = par("lwd"),
-           bg = bg,
-           fg = fg,
            pgx = 0.5 ,
            labdist = 0.1 ,
            rcex = par("cex"),
@@ -21,14 +21,19 @@ drawone <-
            rcol = par("col"),
            lcol = par("col"),
            rsegcol = TRUE,
+           main = main,
            cex.main = cex.main,
            font.main = font.main,
            col.main = col.main,
+           cex.lgtitle = par("cex.main"),
+           font.lgtitle = par("font.main"),
+           col.lgtitle = par("col.main"),
            qtldf = NULL,
            posonleft = TRUE,
            ruler = FALSE,
            prtlgtitles = TRUE,
            lgtitles = NULL,
+           segcol = NULL,
            showonly = NULL,
            sectcoldf = NULL) {
     y <- df$position
@@ -36,16 +41,16 @@ drawone <-
     llab <- df$position
 
     pctwidth <- dim$reqwidth / totwidth
-    width <- pctwidth * pdfwidth
+    width <- pctwidth * pdf.width
 
-    lgwpct <- lgw / pdfwidth
+    lgwpct <- lgw / pdf.width
 
     # if user requested to have positions show on right
     # set up adjustments
 
 
     if (posonleft) {
-      labdistpct <- labdist / pdfwidth
+      labdistpct <- labdist / pdf.width
       x1 <- rep(pgx - lgwpct / 2, length(df$position))
       x2 <- rep(pgx + lgwpct / 2, length(df$position))
       rpos <- 4
@@ -53,12 +58,19 @@ drawone <-
       posmult <- 1    # adjuster for left or right positioning
     }
     else {
-      labdistpct <- -labdist / pdfwidth
+      labdistpct <- -labdist / pdf.width
       x1 <- rep(pgx + lgwpct / 2, length(df$position))
       x2 <- rep(pgx - lgwpct / 2, length(df$position))
       rpos <- 2
       lpos <- 4
       posmult <- -1
+    }
+
+    if (!is.null(segcol)) {
+      linesegcolor <- df[[eval(segcol)]]
+    }
+    else {
+      linesegcolor <- pdf.fg
     }
 
     points(
@@ -78,15 +90,29 @@ drawone <-
       else {
         lgtext = df[1, 1]
       }
+      #mtext writes text in the margins
+
       mtext(
         lgtext,
         at = pgx,
-        line = floor(cex.main),
+        line = 0,
+        cex = cex.lgtitle,
+        col = col.lgtitle,
+        font = font.lgtitle
+      )
+    }
+    if (!is.null(main)) {
+      mtext(
+        main,
+        at = .5,
+        line = 1,
+        outer=TRUE,
         cex = cex.main,
         col = col.main,
         font = font.main
       )
     }
+
 
     # eliminate all but showonly labels if requested
 
@@ -114,84 +140,86 @@ drawone <-
     else {
       solist <- NULL
     }
+    # if density map skip all of this
+    if (!denmap) {
+      # find and save dup locations before calling spreadcexlabs
+      dups <- fsdups(llab, maxnbrcolsfordups)
 
-    # find and save dup locations before calling spreadcexlabs
-    dups <- fsdups(llab, maxnbrcolsfordups)
+      # spread the labels as necessary
+      # heights are negative because y axis is reversed
 
-    # spread the labels as necessary
-    # heights are negative because y axis is reversed
+      if (length(dups$rkeep) > 1) {
+        adjyr <- spreadcexlabs(
+          llab[dups$rkeep],
+          max(strheight(rlab)) * -1.4,
+          strh = -max(strheight(rlab)),
+          min = min(yrange),
+          max = max(yrange),
+          cex = rcex[dups$rkeep],
+          maxiter = 99999
+        )
 
-    if (length(dups$rkeep) > 1) {
-      adjyr <- spreadcexlabs(
-        llab[dups$rkeep],
-        max(strheight(rlab)) * -1.4,
-        strh = -max(strheight(rlab)),
-        min = min(yrange),
-        max = max(yrange),
-        cex = rcex[dups$rkeep],
-        maxiter = 99999
-      )
+      }
+      else {
+        adjyr <- llab[dups$rkeep]
+      }
 
-    }
-    else {
-      adjyr <- llab[dups$rkeep]
-    }
+      pos = rpos
 
-    pos = rpos
+      # label the first columns except those that are dups(
+      if (length(setdiff(dups$rkeep, dups$frkeep)) > 0) {
+        text(
+          x2[setdiff(dups$rkeep, dups$frkeep)] + labdistpct,
+          adjyr[setdiff(1:length(adjyr), dups$fykeep)],
+          labels = rlab[setdiff(dups$rkeep, dups$frkeep)],
+          pos = pos,
+          col = rcol[setdiff(dups$rkeep, dups$frkeep)],
+          cex = rcex[setdiff(dups$rkeep, dups$frkeep)],
+          font = rfont[setdiff(dups$rkeep, dups$frkeep)]
+        )
+      }
 
-    # label the first columns except those that are dups(
-    if (length(setdiff(dups$rkeep, dups$frkeep)) > 0) {
-      text(
-        x2[setdiff(dups$rkeep, dups$frkeep)] + labdistpct,
-        adjyr[setdiff(1:length(adjyr), dups$fykeep)],
-        labels = rlab[setdiff(dups$rkeep, dups$frkeep)],
-        pos = pos,
-        col = rcol[setdiff(dups$rkeep, dups$frkeep)],
-        cex = rcex[setdiff(dups$rkeep, dups$frkeep)],
-        font = rfont[setdiff(dups$rkeep, dups$frkeep)]
-      )
-    }
+      # label the first columns of dups inset for visibility
+      if (length(dups$frkeep > 0)) {
+        text(
+          x2[dups$frkeep] + labdistpct * 1.2,
+          adjyr[dups$fykeep],
+          labels = rlab[dups$frkeep],
+          pos = pos,
+          col = rcol[dups$frkeep],
+          cex = rcex[dups$frkeep],
+          font = rfont[dups$frkeep]
+        )
+      }
 
-    # label the first columns of dups inset for visibility
-    if (length(dups$frkeep > 0)) {
-      text(
-        x2[dups$frkeep] + labdistpct * 1.2,
-        adjyr[dups$fykeep],
-        labels = rlab[dups$frkeep],
-        pos = pos,
-        col = rcol[dups$frkeep],
-        cex = rcex[dups$frkeep],
-        font = rfont[dups$frkeep]
-      )
-    }
+      # now fill out duplicates in columns
+      if (maxnbrcolsfordups > 1) {
+        for (i in 1:length(llab)) {
+          for (m in 1:(maxnbrcolsfordups - 1)) {
+            if (!is.na(dups$yd[m, i])) {
+              if (m == 1) {
+                rx <- x2[i] + labdistpct * 1.2
+              }
+              ry <- adjyr[dups$yd[m, i]]
+              rx <-
+                rx + posmult * (strwidth(rlab[(i + m - 1)]) * rcex[(i + m - 1)] + (strwidth(" ")  * rcex[(i + m -
+                                                                                                            1)]) / 2)
 
-    # now fill out duplicates in columns
-    if (maxnbrcolsfordups > 1) {
-      for (i in 1:length(llab)) {
-        for (m in 1:(maxnbrcolsfordups - 1)) {
-          if (!is.na(dups$yd[m, i])) {
-            if (m == 1) {
-              rx <- x2[i] + labdistpct * 1.2
+              text(
+                rx,
+                ry,
+                labels = rlab[(i + m)],
+                pos = pos,
+                col = rcol[(i + m)],
+                cex = rcex[(i + m)],
+                font =
+                  rfont[(i + m)]
+              )
             }
-            ry <- adjyr[dups$yd[m, i]]
-            rx <-
-              rx + posmult * (strwidth(rlab[(i + m - 1)]) * rcex[(i + m - 1)] + (strwidth(" ")  * rcex[(i + m -
-                                                                                                          1)]) / 2)
-
-            text(
-              rx,
-              ry,
-              labels = rlab[(i + m)],
-              pos = pos,
-              col = rcol[(i + m)],
-              cex = rcex[(i + m)],
-              font =
-                rfont[(i + m)]
-            )
           }
         }
       }
-    }
+    }  # end skip all of this if denmap
 
     # xpd = NA to turn off clipping and arcs can go into margins
     par(xpd = NA)
@@ -217,15 +245,37 @@ drawone <-
       )
     }
 
-    # color sections
+    # color sections and color arcs at end same as first and last section
     if (!is.null(sectcoldf)) {
       if (nrow(sectcoldf) > 0) {
+        if (is.null(lg.col))  #lg.col overrides coloring same as adjcent color
+          {
+        symbols(
+          x = pgx,
+          y = min(y),
+          circles = lgwpct / 2,
+          bg = sectcoldf$col[1],
+          add = TRUE,
+          fg = sectcoldf$col[1],
+          inches = FALSE
+        )
+        symbols(
+          x = pgx,
+          y = max(y),
+          circles = lgwpct / 2,
+          bg = sectcoldf$col[nrow(sectcoldf)],
+          add = TRUE,
+          fg = sectcoldf$col[nrow(sectcoldf)],
+          inches = FALSE
+        )
+        }
         for (sc in 1:nrow(sectcoldf)) {
           rect(pgx - lgwpct / 2,
                sectcoldf$s,
                pgx + lgwpct / 2,
                sectcoldf$e,
-               col = sectcoldf$col)
+               col = sectcoldf$col,
+               border = NA)
         }
       }
     }
@@ -249,114 +299,132 @@ drawone <-
       deg2 = 0,
       lwd = lg.lwd
     )
+    linesegcolor
+    if (!denmap) {
+      if (rsegcol) {
+        segcolprt <- rcol[setdiff(dups$rkeep, dups$frkeep)]
+      }
+      else {
+        segcolprt <- linesegcolor[setdiff(dups$rkeep, dups$frkeep)]
+      }
+      # segments for nondups from chr to marker
 
-    if (rsegcol) {
-      segcol = rcol[setdiff(dups$rkeep, dups$frkeep)]
-    }
-    else {
-      segcol = fg
-    }
-    # segments for nondups from chr to marker
-
-    segments(x2[setdiff(dups$rkeep, dups$frkeep)] + labdistpct,
-             adjyr[setdiff(1:length(adjyr), dups$fykeep)],
-             x2[setdiff(dups$rkeep, dups$frkeep)],
-             llab[setdiff(dups$rkeep, dups$frkeep)],
-             col = segcol)
-    #connect across chromosome
-    segments(x1[setdiff(dups$rkeep, dups$frkeep)],
-             llab[setdiff(dups$rkeep, dups$frkeep)],
-             x2[setdiff(dups$rkeep, dups$frkeep)],
-             llab[setdiff(dups$rkeep, dups$frkeep)], col = segcol)
-
-    if (rsegcol) {
-      segcol = rcol[dups$frkeep]
-    }
-    else {
-      segcol = fg
-    }
-    #segments for dups
-    if (length(dups$frkeep) > 0) {
-      segments(x2[dups$fykeep] + labdistpct * 1.2, adjyr[dups$fykeep],
-               x2[dups$fykeep],
-               llab[dups$frkeep],
-               col = segcol)
-
+      segments(x2[setdiff(dups$rkeep, dups$frkeep)] + labdistpct,
+               adjyr[setdiff(1:length(adjyr), dups$fykeep)],
+               x2[setdiff(dups$rkeep, dups$frkeep)],
+               llab[setdiff(dups$rkeep, dups$frkeep)],
+               col = segcolprt)
       #connect across chromosome
-      segments(x1[dups$frkeep],
-               llab[dups$frkeep],
-               x2[dups$frkeep],
-               llab[dups$frkeep], col = segcol)
+      segments(x1[setdiff(dups$rkeep, dups$frkeep)],
+               llab[setdiff(dups$rkeep, dups$frkeep)],
+               x2[setdiff(dups$rkeep, dups$frkeep)],
+               llab[setdiff(dups$rkeep, dups$frkeep)], col = segcolprt)
 
-      #segments connecting dups vertically
-      if (length(y[dups$rkeep]) > 1) {
-        for (i in 2:length(y[dups$rkeep])) {
-          if (llab[dups$rkeep][i] == llab[dups$rkeep][i - 1]) {
-            segments(x2[dups$rkeep][i] + labdistpct * 1.2,
-                     adjyr[i],
-                     x2[dups$rkeep][i] + labdistpct * 1.2,
-                     adjyr[(i - 1)])
+      if (rsegcol) {
+        segcolprt <- rcol[dups$frkeep]
+      }
+      else {
+        segcolprt <- linesegcolor[dups$frkeep]
+      }
+      #segments for dups
+      if (length(dups$frkeep) > 0) {
+        segments(x2[dups$fykeep] + labdistpct * 1.2, adjyr[dups$fykeep],
+                 x2[dups$fykeep],
+                 llab[dups$frkeep],
+                 col = segcolprt)
+
+        #connect across chromosome
+        segments(x1[dups$frkeep],
+                 llab[dups$frkeep],
+                 x2[dups$frkeep],
+                 llab[dups$frkeep], col = segcolprt)
+
+        #segments connecting dups vertically
+        if (length(y[dups$rkeep]) > 1) {
+          for (i in 2:length(y[dups$rkeep])) {
+            if (llab[dups$rkeep][i] == llab[dups$rkeep][i - 1]) {
+              segments(x2[dups$rkeep][i] + labdistpct * 1.2,
+                       adjyr[i],
+                       x2[dups$rkeep][i] + labdistpct * 1.2,
+                       adjyr[(i - 1)])
+            }
           }
         }
       }
-    }
 
-    # now draw lines across chromosome for non-shown markers if any
+      # now draw lines across chromosome for non-shown markers if any
 
-    if (!is.null(showonly)) {
+      if (!is.null(showonly)) {
+        segments(
+          rep(x1[1], length.out = length(setdiff(y, (
+            llab[dups$rkeep]
+          )))),
+          setdiff(y, (llab[dups$rkeep])),
+          rep(x2[1], length.out = length(setdiff(y, (
+            llab[dups$rkeep]
+          )))),
+          setdiff(y, (llab[dups$rkeep])),
+          col = linesegcolor[dups$rkeep]
+        )
+      }
+
+      pos = lpos
+      if (!ruler) {
+        text(
+          x1[dups$lkeep] - labdistpct,
+          adjyr[dups$flkeep],
+          labels = llab[dups$lkeep],
+          pos = pos,
+          col = lcol[dups$lkeep],
+          cex = lcex[dups$lkeep],
+          font =
+            lfont[dups$lkeep]
+        )
+
+        segments(x1[dups$lkeep] - labdistpct, adjyr[dups$flkeep], x1[dups$lkeep], llab[dups$lkeep])
+      }
+
+    } # end don't do this for density map
+    else {
       segments(
-        rep(x1[1], length.out = length(setdiff(y, (
-          llab[dups$rkeep]
-        )))),
-        setdiff(y, (llab[dups$rkeep])),
-        rep(x2[1], length.out = length(setdiff(y, (
-          llab[dups$rkeep]
-        )))),
-        setdiff(y, (llab[dups$rkeep])),
-        col = fg
+        rep(x1[1], length.out = length(y)),
+        y,
+        rep(x2[1], length.out = length(y)),
+        y,
+        col = linesegcolor
       )
     }
-
-    pos = lpos
-    if (!ruler) {
-      text(
-        x1[dups$lkeep] - labdistpct,
-        adjyr[dups$flkeep],
-        labels = llab[dups$lkeep],
-        pos = pos,
-        col = lcol[dups$lkeep],
-        cex = lcex[dups$lkeep],
-        font =
-          lfont[dups$lkeep]
-      )
-
-      segments(x1[dups$lkeep] - labdistpct, adjyr[dups$flkeep], x1[dups$lkeep], llab[dups$lkeep])
-    }
-
 
     # figure locus labwidth to pass back for connecting markers
     # and for drawing qtls
 
     yrlabwidth <- vector(length = length(llab))
-    yrlabwidth[setdiff(dups$rkeep, dups$frkeep)] <-
-      strwidth(rlab[setdiff(dups$rkeep, dups$frkeep)], units = "inches") *
-      rcex[setdiff(dups$rkeep, dups$frkeep)] + labdist
-    yrlabwidth[dups$frkeep] <-
-      strwidth(rlab[dups$frkeep], units = "inches") *
-      rcex[dups$frkeep] + labdist * 1.2
-    # now add space for duplicates in cols
-    if (maxnbrcolsfordups > 1) {
-      for (i in 1:length(llab)) {
-        for (m in 1:(maxnbrcolsfordups - 1)) {
-          if (!is.na(dups$yd[m, i])) {
-            yrlabwidth[i] <-
-              yrlabwidth[i] + strwidth(rlab[(i + m)], units = "inches") * rcex[(i + m)] + (strwidth(" ", units =
-                                                                                                      "inches")  * rcex[(i + m)]) / 2
+    if (denmap) {
+      yrlabwidth <- strwidth("M", units = "inches")
+      adjyr <- y
+      adjyl <- y
+      dups <- NULL
+    }
+    else {
+      yrlabwidth[setdiff(dups$rkeep, dups$frkeep)] <-
+        strwidth(rlab[setdiff(dups$rkeep, dups$frkeep)], units = "inches") *
+        rcex[setdiff(dups$rkeep, dups$frkeep)] + labdist
+      yrlabwidth[dups$frkeep] <-
+        strwidth(rlab[dups$frkeep], units = "inches") *
+        rcex[dups$frkeep] + labdist * 1.2
+      # now add space for duplicates in cols
+      if (maxnbrcolsfordups > 1) {
+        for (i in 1:length(llab)) {
+          for (m in 1:(maxnbrcolsfordups - 1)) {
+            if (!is.na(dups$yd[m, i])) {
+              yrlabwidth[i] <-
+                yrlabwidth[i] + strwidth(rlab[(i + m)], units = "inches") * rcex[(i + m)] + (strwidth(" ", units =
+                                                                                                        "inches")  * rcex[(i + m)]) / 2
+            }
           }
         }
       }
     }
-
     # save yrlabwidth before adding in any qtls to pass back for connecting markers
     returnlabwidth <- yrlabwidth
 
@@ -404,7 +472,7 @@ drawone <-
                   adjyr <= (qtlend   - strheight("M") * max(rcex)))) {
             qtlxpos <-
               max(yrlabwidth[yrlabwidth > 0][which(adjyr >= (qtlstart + strheight("M") * max(rcex)) &
-                                                     adjyr <= (qtlend - strheight("M") * max(rcex)))]) / pdfwidth
+                                                     adjyr <= (qtlend - strheight("M") * max(rcex)))]) / pdf.width
             yrlabwidth[yrlabwidth > 0][which(adjyr >= (qtlstart + strheight("M") * max(rcex)) &
                                                adjyr <= (qtlend  - strheight("M") * max(rcex)))] <-
               yrlabwidth[yrlabwidth > 0][which(adjyr >= (qtlstart + strheight("M") * max(rcex)) &

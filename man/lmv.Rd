@@ -5,28 +5,34 @@
 \title{LinkageMapView plotting function}
 \usage{
 lmv(mapthis, outfile, mapthese = NULL, autoconnadj = TRUE,
-  bg = "transparent", cex.main = par("cex.main"),
-  col.main = par("col.main"), conndf = NULL, dupnbr = FALSE,
-  family = "Helvetica", fg = "black", font.main = par("font.main"),
-  header = TRUE, labdist = 0.3, lcex = par("cex"), lcol = par("col"),
-  lfont = par("font"), lgperrow = NULL, lgtitles = NULL, lgw = 0.25,
-  lg.col = NULL, lg.lwd = par("lwd"), markerformatlist = NULL,
-  maxnbrcolsfordups = 3, pdfwidth = NULL, pdfheight = NULL,
-  pointsize = 12, posonleft = NULL, prtlgtitles = TRUE, qtldf = NULL,
-  revthese = NULL, rcex = par("cex"), rcol = par("col"),
+  pdf.bg = "transparent", cex.axis = par("cex.axis"),
+  cex.lgtitle = par("cex.main"), cex.main = par("cex.main"),
+  col.axis = par("col.axis"), col.lgtitle = par("col.main"),
+  col.main = par("col.main"), conndf = NULL, denmap = FALSE,
+  dupnbr = FALSE, pdf.family = "Helvetica", pdf.fg = "black",
+  font.axis = par("font.axis"), font.lgtitle = par("font.main"),
+  font.main = par("font.main"), header = TRUE, labdist = 0.3,
+  lcex = par("cex"), lcol = par("col"), lfont = par("font"),
+  lgperrow = NULL, lgtitles = NULL, lgw = 0.25, lg.col = NULL,
+  lg.lwd = par("lwd"), main = NULL, markerformatlist = NULL,
+  maxnbrcolsfordups = 3, pdf.width = NULL, pdf.height = NULL,
+  pdf.pointsize = 12, posonleft = NULL, prtlgtitles = TRUE,
+  qtldf = NULL, revthese = NULL, rcex = par("cex"), rcol = par("col"),
   rfont = par("font"), roundpos = 1, rsegcol = TRUE, ruler = FALSE,
-  sectcoldf = NULL, qtlscanone = NULL, showonly = NULL,
-  title = "LinkageMapView R output")
+  sectcoldf = NULL, segcol = NULL, qtlscanone = NULL, showonly = NULL,
+  pdf.title = "LinkageMapView R output", units = "cM")
 }
 \arguments{
 \item{mapthis}{Required, either a 'cross' object from r/qtl, a csv or txt
   file or a data frame with the following 3 columns in this order:
 \enumerate{
-  \item Linkage group name. This will be the title for the linkage
+  \item Required, linkage group name. This will be the title for the linkage
         group unless overridden - see lgtitles.
-  \item Position - must be in numerical order ascending within
+  \item Required, position - must be in numerical order ascending within
         linkage group name.
-  \item Locus - marker name at this position.
+  \item Required, locus - marker name at this position.
+  \item Optional, segcol - color for the line across the chromosome
+        at this marker.  See also segcol parameter.
 }}
 
 \item{outfile}{Required, name for the output pdf file.}
@@ -37,15 +43,27 @@ The default, NULL, will print all linkage groups in mapthis.}
 \item{autoconnadj}{If TRUE (the default), locus with the same name
 (homologs) on adjacent linkage groups will be connected with a line.}
 
-\item{bg}{Background coloer for the pdf.  Default is "transparent".}
+\item{pdf.bg}{Background color for the pdf.  Default is "transparent".}
 
-\item{cex.main}{The magnification to be used for linkage group titles.
+\item{cex.axis}{The magnification to be used for axis (ruler) text.
+The default is par("cex.axis").}
+
+\item{cex.lgtitle}{The magnification to be used for linkage group titles.
 The default is par("cex.main").}
 
-\item{col.main}{The color to be used for linkage group titles.
+\item{cex.main}{The magnification to be used for main title.
+The default is par("cex.main").}
+
+\item{col.axis}{The color to be used for axis (ruler) text.
+Defaults to par("col.axis").}
+
+\item{col.lgtitle}{The color to be used for linkage group titles.
 Defaults to par("col.main").}
 
-\item{conndf}{An optional dataframe containing markers to be connected
+\item{col.main}{The color to be used for the main title.
+Defaults to par("col.main").}
+
+\item{conndf}{An optional data frame containing markers to be connected
 with lines (homologs).  If autoconnadj = TRUE, these lines will
 appear as well as those with the same name in adjacent linkage
 groups.  Required columns:
@@ -56,14 +74,32 @@ groups.  Required columns:
 \item tolocus Locus name for the line end.
 }}
 
+\item{denmap}{If TRUE, you are requesting a density map which means no locus
+or position labels will be printed and the following parameters are
+set:
+ruler = TRUE
+autoconndf = FALSE
+conndf = NULL
+See also sectcoldf parameter}
+
 \item{dupnbr}{If TRUE, only the first marker name at a position will print
 with (## more) afterwards indicating the number of duplicate markers
 at that position.  dupnbr should be left to the default, FALSE,
 if showonly provided.}
 
-\item{family}{Font family for all text.  Default is "Helvitica".}
+\item{pdf.family}{Font family for all text.  Default is "Helvetica".}
 
-\item{fg}{Foreground color for the pdf.  Default is black.}
+\item{pdf.fg}{Foreground color for the pdf.  Default is black.}
+
+\item{font.axis}{An integer which specifies which font to use for the
+axis (ruler) text.
+The default is par("font.axis"). 1 is plain text.  2 is bold.
+3 is italic. 4 is bold italic.}
+
+\item{font.lgtitle}{An integer which specifies which font to use for the
+linkage group titles text.
+The default is par("font.main"). 1 is plain text.  2 is bold.
+3 is italic. 4 is bold italic.}
 
 \item{font.main}{An integer which specifies which font to use for title text.
 The default is par("font.main"). 1 is plain text.  2 is bold.
@@ -93,15 +129,19 @@ groups will be plotted.}
 will override the default, which is that the linkage group names
 in the input print as titles.  This may be useful if in mapthese you
 have indicated to print the same linkage group more than once for the
-purpose of showing homologous markers without having lines cross.}
+purpose of showing homologous markers without having lines cross.
+See also cex.lgtitle, col.lgtitle, font.lgtitle}
 
 \item{lgw}{Width of chromosome in inches.  Default is 0.25 inches.}
 
 \item{lg.col}{Linkage group color.  The color of the chromosomes.
-The default is the background color (bg).}
+The default is the background color (pdf.bg).}
 
 \item{lg.lwd}{Linkage group linewidth. The width of the line around
 the chromosome.  Defaults to par("lwd").}
+
+\item{main}{An optional title for the linkage group map.  See also
+cex.main, col.main, and font.main.}
 
 \item{markerformatlist}{An optional list containing the following vectors:
 \itemize{
@@ -119,14 +159,14 @@ the chromosome.  Defaults to par("lwd").}
 \item{maxnbrcolsfordups}{Indicates the number of columns across the page for
 locus labels appearing at duplicate positions.  The default is 3.}
 
-\item{pdfwidth}{Width of the output file in inches.  Defaults to 7.}
+\item{pdf.width}{Width of the output file in inches.  Defaults to 7.}
 
-\item{pdfheight}{Height of the output file in inches.  Defaults to 7.}
+\item{pdf.height}{Height of the output file in inches.  Defaults to 7.}
 
-\item{pointsize}{The default point size to be used.  Defaults to 12.}
+\item{pdf.pointsize}{The default point size to be used.  Defaults to 12.}
 
 \item{posonleft}{A vector of boolean (TRUE or FALSE) the length of the
-number of linkage groups to be plotted. if FALSE, print positions on
+number of linkage groups to be plotted. If FALSE, print positions on
 right hand side of linkage group and locus names on left hand side
 of linkage group.  Default is TRUE.}
 
@@ -166,30 +206,46 @@ positions.  Default is 1}
 TRUE, the default, indicates the color should be the
 same as the label.}
 
-\item{ruler}{A single boolean (TRUE OR FALSE).  If TRUE, a cM ruler is
+\item{ruler}{A single boolean (TRUE OR FALSE).  If TRUE, an axis is
 drawn on the left hand side of the page and the position labels
 are not printed on any linkage group.  The default is FALSE.}
 
 \item{sectcoldf}{Optional data frame containing the following named columns
-indicating sections of the chromosome to be colored:
-  \itemize{
-    \item chr - matches from input file or cross object
-     linkage group name
-    \item s - start position in cM
-    \item e - end position in cM
-    \item col - color for section
-   }}
+      indicating sections of the chromosome to be colored:
+        \itemize{
+          \item Required, chr - matches from input file or cross object
+           linkage group name
+          \item Required, s - start position in cM
+          \item Required, e - end position in cM
+          \item Required, col - color for section
+          \item Optional, dens - a numeric cm / marker value used to print
+           the density map legend.
+         }
+       For a density map, use the lmvdencolor function to populate sectcoldf.
+       When denmap = TRUE and no sectcoldf parameter is supplied, lmvdencolor
+       is called with defaults fully populating the sectcoldf data frame.
+       See also the denmap parameter.
 
-\item{qtlscanone}{Optional scanone dataframe from package r/qtl.  If provided,
+       @seealso \code{\link{lmvdencolor}}}
+
+\item{segcol}{Optional. Name of the column in mapthis that contains colors for the line
+segments across the chromosome.}
+
+\item{qtlscanone}{Optional scanone data frame from package r/qtl.  If provided,
 all QTLs in the dataframe will be drawn by calculating their
 start and end with the r/qtl function bayesint with defaults.}
 
 \item{showonly}{Optional vector of marker names.  If provided, only these
 marker names will be printed.}
 
-\item{title}{Title to be passed to pdf as metadata.  This title does not
+\item{pdf.title}{Title to be passed to pdf as metadata.  This title does not
 appear except in the pdf metadata.  Defaults to
 "LinkageMapView R output".}
+
+\item{units}{Units of the position values supplied in mapthis.  The default
+value is cM (centimorgan) but any value can be provided.  The
+value provided is only used for a ruler (y axis) label and the density map
+legend text.}
 }
 \description{
 lmv is the main function to produce linkage group maps and has many
@@ -220,7 +276,8 @@ outfile = paste(tempdir(),"/hyperred.pdf",sep="")
 lmv(hyper,outfile,mapthese=c(1,4,6,15),markerformatlist=flist)
 
 ## change some of the pdf options and chromosome color
-## changing title color (col.main) to same as foreground pdf color
+## changing linkage group title color (col.lgtitle) to same as
+## foreground pdf color
 
 library(qtl)
 data(hyper)
@@ -228,8 +285,8 @@ data(hyper)
 outfile = paste(tempdir(),"/hyperlg.pdf",sep="")
 lmv(hyper,outfile,
 mapthese=c(1,4,6,15),
-bg="black",fg="white",col.main="white",
-pdfheight=8,title="myhyper",lg.col="tan")
+pdf.bg="black",pdf.fg="white",col.lgtitle="white",
+pdf.height=8,pdf.title="myhyper",lg.col="tan")
 
 ## change all label colors and fonts
 
@@ -325,9 +382,27 @@ lmv(
   maxnbrcolsfordups = 1,
   markerformatlist = flist,
   lg.col = "lightblue1",
-  pdfwidth =10,
+  pdf.width =10,
   revthese = c("70349LG3"),
   qtldf=qtldf
 )
+
+
+## do a density map with default colors
+data(oat)
+
+outfile = paste(tempdir(),"/oat_Mrg01.pdf",sep="")
+lmv(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE)
+
+
+## do a density map and provide your own colors with lmvdencolor helper
+data(oat)
+##
+outfile = paste(tempdir(),"/oat_Mrg01_YlGn.pdf",sep="")
+
+sectcoldf <- lmvdencolor(oat,colorin =
+colorRampPalette(RColorBrewer::brewer.pal(8, "YlGn"))(5))
+
+lmv(oat,outfile,denmap=TRUE,sectcoldf=sectcoldf)
 }
 

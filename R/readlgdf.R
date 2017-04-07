@@ -12,7 +12,7 @@ readlgdf <-
     }
 
     # assign my own column names so I can reference by name
-    colnames(df) <- c("group", "position", "locus")
+    colnames(df)[1:3] <- c("group", "position", "locus")
 
     # make group a character field
 
