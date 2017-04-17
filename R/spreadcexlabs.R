@@ -7,7 +7,7 @@ spreadcexlabs <-
   function(x,
            mindiff,
            strh,
-           maxiter = 1000,
+           maxiter = 7500,
            stepsize = 1 / 10,
            min = -Inf,
            max = Inf,

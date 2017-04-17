@@ -11,7 +11,7 @@ show <- function(showonly,
                  lcol = par("col"))
 {
   # when invoked all vectors except showonly should be the
-  # same length - see lmv.R where they are set
+  # same length - see lmv.linkgae.plot.R where they are set
 
   newllab <- vector()
   newrlab <- vector()

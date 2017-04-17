@@ -16,7 +16,7 @@ library(devtools)
 
 ### Then to install LinkageMapView:
 ```R
-devtools:: install_github("louellette/LinkageMapView")
+devtools:: install_github("louellette/LinkageMapView",build_vignettes=TRUE)
 ```
 
 ### Once installed:
@@ -26,6 +26,6 @@ library(LinkageMapView)
 
 ## To see examples and parameter descriptions:
 ```R
-?lmv
+?lmv.linkage.plot
 ```
 Feel free to add Issues for problems or questions.

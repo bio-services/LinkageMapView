@@ -1,6 +1,6 @@
 #'  LinkageMapView plotting function
 #'
-#'  lmv is the main function to produce linkage group maps and has many
+#'  lmv.linkage.plot is the main function to produce linkage group maps and has many
 #'      parameters to customize the pdf output.
 #'
 #' @param mapthis Required, either a 'cross' object from r/qtl, a csv or txt
@@ -19,6 +19,11 @@
 #'
 #' @param mapthese Optional vector of linkage group names to print.
 #'        The default, NULL, will print all linkage groups in mapthis.
+#'
+#' @param at.axis Optional. The points at which tick-marks are to be drawn on the ruler.
+#'        Non-finite (infinite, NaN or NA) values are omitted.
+#'        By default (when NULL) tickmark locations are computed.
+#'  #' @seealso \code{\link[graphics]{axis}}
 #'
 #' @param autoconnadj If TRUE (the default), locus with the same name
 #'        (homologs) on adjacent linkage groups will be connected with a line.
@@ -85,6 +90,12 @@
 #' @param labdist Distance in inches from the chromosome to the position
 #'        and locus labels. The default is 0.3 inches.
 #'
+#' @param labels.axis	Optional. This can either be a logical value specifying
+#'        whether (numerical) annotations are to be made at the tickmarks on the ruler,
+#'        or a character or expression vector of labels to be placed at the tickpoints.
+#'        If this is not logical, at should also be supplied and of the same length.
+#'        The default is TRUE.
+#'
 #' @param lcex A numerical value giving the amount by which position labels
 #'        should be magnified.  The default is par("cex").
 #'        See also rcex for locus labels.
@@ -114,6 +125,12 @@
 #' @param lg.lwd Linkage group linewidth. The width of the line around
 #'        the chromosome.  Defaults to par("lwd").
 #'
+#' @param lty.axis Optional. Line type for both the axis line and the tick marks.
+#'
+#' @param lwd.axis Optional.  Line width for the axis line.  The default is 1.
+#' @param lwd.ticks.axis Optional.  Line width for the axis tick marks.
+#'        Default is lwd.axis
+#'
 #' @param main An optional title for the linkage group map.  See also
 #'        cex.main, col.main, and font.main.
 #'
@@ -139,7 +156,8 @@
 #'
 #' @param pdf.fg Foreground color for the pdf.  Default is black.
 #'
-#' @param pdf.height Height of the output file in inches.  Defaults to 7.
+#' @param pdf.height Height of the output file in inches.  Defaults to the size
+#' necessary to fit all linkage groups with other options specified.
 #'
 #' @param pdf.pointsize The default point size to be used.  Defaults to 12.
 #'
@@ -147,7 +165,8 @@
 #'        appear except in the pdf metadata.  Defaults to
 #'        "LinkageMapView R output".
 #'
-#' @param pdf.width Width of the output file in inches.  Defaults to 7.
+#' @param pdf.width Width of the output file in inches.  Defaults to the size
+#' necessary to fit all linkage groups with other options specified.
 #'
 #' @param posonleft A vector of boolean (TRUE or FALSE) the length of the
 #'        number of linkage groups to be plotted. If FALSE, print positions on
@@ -217,15 +236,18 @@
 #'        @seealso \code{\link{lmvdencolor}}
 #'
 #' @param segcol Optional. Name of the column in mapthis that contains colors for the line
-#'        segments across the chromosome.
+#'        segments across the chromosome.  If specified, this overrides rsegcol.
 #'
 #' @param showonly Optional vector of marker names.  If provided, only these
 #'        marker names will be printed.
 #'
 #' @param units Units of the position values supplied in mapthis.  The default
 #'        value is cM (centimorgan) but any value can be provided.  The
-#'        value provided is only used for a ruler (y axis) label and the density map
-#'        legend text.
+#'        value provided is only used for a ruler (y axis) title and the density
+#'        map legend text.
+#'
+#' @param ylab Optional.  Title for the y-axis (ruler).  The default value is
+#'        "Density (<units>)"  See units parameter.
 #'
 #' @export
 #'
@@ -237,7 +259,7 @@
 #' library(qtl)
 #' data(hyper)
 #' outfile = paste(tempdir(),"/hyper.pdf",sep="")
-#' lmv(hyper,outfile,mapthese=c(1,4,6,15))
+#' lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15))
 #'
 #' ## color some of the markers for emphasis
 #'
@@ -251,7 +273,7 @@
 #' flist[[1]] <- list(locus=locus,col=col)
 #'
 #' outfile = paste(tempdir(),"/hyperred.pdf",sep="")
-#' lmv(hyper,outfile,mapthese=c(1,4,6,15),markerformatlist=flist)
+#' lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),markerformatlist=flist)
 #'
 #' ## change some of the pdf options and chromosome color
 #' ## changing linkage group title color (col.lgtitle) to same as
@@ -261,7 +283,7 @@
 #' data(hyper)
 #'
 #' outfile = paste(tempdir(),"/hyperlg.pdf",sep="")
-#' lmv(hyper,outfile,
+#' lmv.linkage.plot(hyper,outfile,
 #' mapthese=c(1,4,6,15),
 #' pdf.bg="black",pdf.fg="white",col.lgtitle="white",
 #' pdf.height=8,pdf.title="myhyper",lg.col="tan")
@@ -272,7 +294,7 @@
 #' data(hyper)
 #'
 #' outfile = paste(tempdir(),"/hypercol.pdf",sep="")
-#' lmv(hyper,outfile,mapthese=c(1,4,6,15),
+#' lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),
 #' lcol="blue",lfont=2,lcex=1.2,rcol="red",rfont=3,rcex=2)
 #'
 #' ## make a dataframe to pass sections of chr to col
@@ -290,7 +312,7 @@
 #' sectcoldf <-  data.frame(chr, s, e, col,stringsAsFactors = FALSE)
 #'
 #' outfile = paste(tempdir(),"/hyperruler.pdf",sep="")
-#' lmv(hyper,outfile,mapthese=c(1,4,6,15),
+#' lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),
 #' ruler=TRUE,maxnbrcolsfordups = 1, sectcoldf=sectcoldf)
 #'
 #' ## plot qtls also out of a r/qtl scanone object
@@ -308,7 +330,7 @@
 #' hyper.scanone <- scanone(hyper)
 #'
 #' outfile = paste(tempdir(),"/testrqtlhyper2.pdf",sep="")
-#' lmv(hyper,
+#' lmv.linkage.plot(hyper,
 #'    outfile, mapthese=c(1,4,6,7,15),
 #'    qtlscanone = hyper.scanone,
 #'    posonleft = c(TRUE,FALSE,TRUE,FALSE,TRUE))
@@ -357,7 +379,7 @@
 #' filename <- system.file("extdata", "Carrot.csv", package="LinkageMapView")
 
 #' outfile = paste(tempdir(),"/carrot.pdf",sep="")
-#' lmv(
+#' lmv.linkage.plot(
 #'   mapthis = filename,
 #'   outfile = outfile,
 #'   ruler = TRUE,
@@ -375,7 +397,7 @@
 #' data(oat)
 #'
 #' outfile = paste(tempdir(),"/oat_Mrg01.pdf",sep="")
-#' lmv(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE)
+#' lmv.linkage.plot(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE)
 #'
 #'
 #' ## do a density map and provide your own colors with lmvdencolor helper
@@ -386,14 +408,14 @@
 #' sectcoldf <- lmvdencolor(oat,colorin =
 #' colorRampPalette(RColorBrewer::brewer.pal(8, "YlGn"))(5))
 #'
-#' lmv(oat,outfile,denmap=TRUE,sectcoldf=sectcoldf)
+#' lmv.linkage.plot(oat,outfile,denmap=TRUE,sectcoldf=sectcoldf)
 
 
-lmv <- function(mapthis,
+lmv.linkage.plot <- function(mapthis,
                 outfile,
                 mapthese = NULL,
+                at.axis = NULL,
                 autoconnadj = TRUE,
-                pdf.bg = "transparent",
                 cex.axis = par("cex.axis"),
                 cex.lgtitle = par("cex.main"),
                 cex.main = par("cex.main"),
@@ -403,13 +425,12 @@ lmv <- function(mapthis,
                 conndf = NULL,
                 denmap = FALSE,
                 dupnbr = FALSE,
-                pdf.family = "Helvetica",
-                pdf.fg = "black",
                 font.axis = par("font.axis"),
                 font.lgtitle = par("font.main"),
                 font.main = par("font.main"),
                 header = TRUE,
                 labdist = .3,
+                labels.axis = TRUE,
                 lcex = par("cex"),
                 lcol = par("col"),
                 lfont = par("font"),
@@ -418,12 +439,19 @@ lmv <- function(mapthis,
                 lgw = 0.25,
                 lg.col = NULL,
                 lg.lwd = par("lwd"),
+                lty.axis = "solid",
+                lwd.axis = 1,
+                lwd.ticks.axis = lwd.axis,
                 main = NULL,
                 markerformatlist = NULL,
                 maxnbrcolsfordups = 3,
+                pdf.bg = "transparent",
+                pdf.family = "Helvetica",
+                pdf.fg = "black",
                 pdf.width = NULL,
                 pdf.height = NULL,
                 pdf.pointsize = 12,
+                pdf.title = "LinkageMapView R output",
                 posonleft = NULL,
                 prtlgtitles = TRUE,
                 qtldf = NULL,
@@ -438,8 +466,8 @@ lmv <- function(mapthis,
                 segcol = NULL,
                 qtlscanone = NULL,
                 showonly = NULL,
-                pdf.title = "LinkageMapView R output",
-                units = "cM")
+                units = "cM",
+                ylab = paste("Density (",units,")",sep=""))
 
 
 {
@@ -477,7 +505,7 @@ lmv <- function(mapthis,
     }
     lgin <- readlgcross(mapthis, mapthese)
   }
-  else if ("character" == class(mapthis)) {
+  else if ("character" %in% class(mapthis)) {
     if (is.null(mapthese)) {
       lgin <- readlgtext(mapthis, header = header)
       mapthese <- unique(lgin$group)
@@ -485,9 +513,9 @@ lmv <- function(mapthis,
       lgin <- readlgtext(mapthis, mapthese, header = header)
     }
   }
-  else if ("data.frame" == class(mapthis)) {
+  else if ("data.frame" %in% class(mapthis)) {
     if (is.null(mapthese)) {
-      lgin <- readlgdf(mapthis)
+      lgin <- readlgdf(as.data.frame(mapthis))
       mapthese <- unique(lgin$group)
     } else{
       lgin <- readlgdf(mapthis, mapthese)
@@ -528,6 +556,9 @@ lmv <- function(mapthis,
     # make sure segcol column exists in input
     if (!(segcol %in% colnames(lgin))) {
       stop (c("segcol column ", segcol, " not found in mapthis"))
+    }
+    else {
+      rsegcol <- FALSE
     }
   }
 
@@ -630,16 +661,19 @@ lmv <- function(mapthis,
 
   if (ruler) {
     leftmar <- 1 + ceiling(cex.axis)
+    if (!is.null(units)) {
+      leftmar <- leftmar + 1
+    }
   }
   else {
     leftmar <- 1
   }
 
   if (prtlgtitles) {
-    topmar <- ceiling(cex.lgtitle)
+    topmar <- ceiling(cex.lgtitle) + 1
   }
   else {
-    topmar <- 0
+    topmar <- 1
   }
 
   if (!is.null(main)) {
@@ -648,17 +682,6 @@ lmv <- function(mapthis,
   else {
     topoma <- 1
   }
-
-  if (!is.null(units)) {
-    leftoma <- 2
-  }
-  else {
-    leftoma <- 1
-  }
-  par(mar = c(1, leftmar, topmar, 0),oma = c(1, leftoma, topoma, 1),new=FALSE)
- # lmvpar <-
-    par(no.readonly = TRUE)   # save parameters to pass to reqdim and for plot
-
 
   # ------------- End set par options --------------------
 
@@ -676,7 +699,8 @@ lmv <- function(mapthis,
 
   pdf(outfile, width = 30, height = 30)
   on.exit(dev.off(), add = TRUE)
-#  par(lmvpar)
+
+  par(mar = c(0, leftmar, topmar, 0),oma = c(1, 0, topoma, 1),new=FALSE)
 
 
   lg <- list()
@@ -694,7 +718,7 @@ lmv <- function(mapthis,
   # make a list of linkage groups to process
   # reverse position numbers if requested
   for (i in 1:length(mapthese)) {
-    lg[[i]] <- getlg(lgin, mapthese[i], dupnbr)
+    lg[[i]] <- getlg(lgin, mapthese[i], dupnbr,roundpos)
     editlgdf(lg[[i]])  # display message and stop if not in correct format
     if (lg[[i]]$group[1] %in% revthese) {
       lg[[i]]$locus <- rev(lg[[i]]$locus)
@@ -876,9 +900,9 @@ lmv <- function(mapthis,
     # give a little for left and right margin first
 
     dim[[fromlg]]$reqwidth <-
-      dim[[fromlg]]$reqwidth + 0.3
-    dim[[tolg]]$reqwidth <-
-      dim[[tolg]]$reqwidth + 0.3
+      dim[[fromlg]]$reqwidth + 0.5
+ #   dim[[tolg]]$reqwidth <-
+#    dim[[tolg]]$reqwidth + 0.3
 
     for (i in fromlg:tolg)    {
       totwidth[nr] <- dim[[i]]$reqwidth + totwidth[nr]
@@ -941,7 +965,8 @@ lmv <- function(mapthis,
   )
 
   pdf(outfile, width = pdf.width, height = pdf.height)
- # par(lmvpar)
+
+  par(mar = c(0, leftmar, topmar, 0),oma = c(1, 0.2, topoma, 0.2),new=FALSE)
 
   if (denmap & !is.null(sectcoldf$dens) ) {
     layout(c(seq(1, nbrrows + 1)), heights = relheight)
@@ -975,9 +1000,14 @@ lmv <- function(mapthis,
         side = 2,
         col.axis = col.axis,
         cex.axis = cex.axis,
-        font.axis = font.axis
+        font.axis = font.axis,
+        at = at.axis,
+        labels = labels.axis,
+        lty = lty.axis,
+        lwd = lwd.axis,
+        lwd.ticks = lwd.ticks.axis
       )
-      mtext(units, side = 2, outer = TRUE)
+      mtext(ylab, side = 2, line=leftmar-1)
     }
 
     # if last row put footnote

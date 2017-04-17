@@ -1,17 +1,18 @@
 # extract one linkage group
 
-getlg <- function(df, lg, dupnbr) {
+getlg <- function(df, lg, dupnbr,roundpos) {
     # if dupnbr is true user wants only first marker name
     # at a position to show with (### more) after the marker name
     # to indicate how many more markers at that position
     # We'll use (### more) as the second label so that the first
     # label isn't corrupted for connecting homologous markers
     # based on matching marker names.  That means we need to
-    # set maxnbrcolsfordups <- 2 in lmv.
+    # set maxnbrcolsfordups <- 2 in lmv.linkage.plot.
 
     templg <- subset(df, df[, 1] == lg)
     # make sure linkage group is in order by position
     thislg <- templg[order(templg$position),]
+    thislg$position <- round(thislg$position, roundpos)
     if (dupnbr) {
         keeprows <- vector()
         dupcount <- vector(length = nrow(thislg))

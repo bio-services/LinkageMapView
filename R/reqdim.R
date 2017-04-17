@@ -133,9 +133,9 @@ reqdim <- function(df,
 
       reqheight <-
         max(
-          sum(strheight(llab, units = "inches") * lcex * 1.4),
-          sum(strheight(rlab, units = "inches") * rcex * 1.4),
-          sum(strheight(llab, units = "inches") * rcex * 1.4)
+          sum(strheight(llab[dups$rkeep], units = "inches") * lcex[dups$rkeep] * 1.4),
+          sum(strheight(rlab[dups$rkeep], units = "inches") * rcex[dups$rkeep] * 1.4),
+          sum(strheight(llab[dups$rkeep], units = "inches") * rcex[dups$rkeep] * 1.4)
         ) # because positions spread like markers
     }
     else {
@@ -174,7 +174,7 @@ reqdim <- function(df,
   }
 
   # give a margin at top and bottom for chromosome ends and margins
-  reqheight = reqheight + lgw + par("mai")[1] + par("mai")[3]
+  reqheight = reqheight + lgw + par("mai")[1] + par("mai")[3] + par("omi")[1] + par("omi")[3]
 
   list(
     reqwidth = reqwidth,

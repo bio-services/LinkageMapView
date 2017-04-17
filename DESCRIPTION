@@ -21,5 +21,7 @@ Imports:
 Suggests:
     qtl (>= 1.39-5),
     rmarkdown,
-    testthat
+    testthat,
+    knitr
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr

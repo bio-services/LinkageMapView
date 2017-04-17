@@ -70,7 +70,7 @@ drawone <-
       linesegcolor <- df[[eval(segcol)]]
     }
     else {
-      linesegcolor <- pdf.fg
+      linesegcolor <- rep(pdf.fg,nrow(df))
     }
 
     points(
@@ -95,7 +95,7 @@ drawone <-
       mtext(
         lgtext,
         at = pgx,
-        line = 0,
+        line = 1,
         cex = cex.lgtitle,
         col = col.lgtitle,
         font = font.lgtitle
@@ -106,7 +106,7 @@ drawone <-
         main,
         at = .5,
         line = 1,
-        outer=TRUE,
+        outer = TRUE,
         cex = cex.main,
         col = col.main,
         font = font.main
@@ -245,37 +245,43 @@ drawone <-
       )
     }
 
+
     # color sections and color arcs at end same as first and last section
     if (!is.null(sectcoldf)) {
       if (nrow(sectcoldf) > 0) {
-        if (is.null(lg.col))  #lg.col overrides coloring same as adjcent color
+        if (is.null(lg.col)) {
+          if (denmap)
+            #lg.col overrides coloring same as adjcent color
           {
-        symbols(
-          x = pgx,
-          y = min(y),
-          circles = lgwpct / 2,
-          bg = sectcoldf$col[1],
-          add = TRUE,
-          fg = sectcoldf$col[1],
-          inches = FALSE
-        )
-        symbols(
-          x = pgx,
-          y = max(y),
-          circles = lgwpct / 2,
-          bg = sectcoldf$col[nrow(sectcoldf)],
-          add = TRUE,
-          fg = sectcoldf$col[nrow(sectcoldf)],
-          inches = FALSE
-        )
-        }
-        for (sc in 1:nrow(sectcoldf)) {
-          rect(pgx - lgwpct / 2,
-               sectcoldf$s,
-               pgx + lgwpct / 2,
-               sectcoldf$e,
-               col = sectcoldf$col,
-               border = NA)
+            symbols(
+              x = pgx,
+              y = min(y),
+              circles = lgwpct / 2,
+              bg = sectcoldf$col[1],
+              add = TRUE,
+              fg = sectcoldf$col[1],
+              inches = FALSE
+            )
+            symbols(
+              x = pgx,
+              y = max(y),
+              circles = lgwpct / 2,
+              bg = sectcoldf$col[nrow(sectcoldf)],
+              add = TRUE,
+              fg = sectcoldf$col[nrow(sectcoldf)],
+              inches = FALSE
+            )
+          }
+          for (sc in 1:nrow(sectcoldf)) {
+            rect(
+              pgx - lgwpct / 2,
+              sectcoldf$s,
+              pgx + lgwpct / 2,
+              sectcoldf$e,
+              col = sectcoldf$col,
+              border = NA
+            )
+          }
         }
       }
     }
@@ -299,13 +305,13 @@ drawone <-
       deg2 = 0,
       lwd = lg.lwd
     )
-    linesegcolor
+
     if (!denmap) {
       if (rsegcol) {
         segcolprt <- rcol[setdiff(dups$rkeep, dups$frkeep)]
       }
       else {
-        segcolprt <- linesegcolor[setdiff(dups$rkeep, dups$frkeep)]
+        segcolprt <- pdf.fg
       }
       # segments for nondups from chr to marker
 
@@ -314,6 +320,13 @@ drawone <-
                x2[setdiff(dups$rkeep, dups$frkeep)],
                llab[setdiff(dups$rkeep, dups$frkeep)],
                col = segcolprt)
+
+      if (rsegcol) {
+        segcolprt <- rcol[setdiff(dups$rkeep, dups$frkeep)]
+      }
+      else {
+        segcolprt <- linesegcolor[setdiff(dups$rkeep, dups$frkeep)]
+      }
       #connect across chromosome
       segments(x1[setdiff(dups$rkeep, dups$frkeep)],
                llab[setdiff(dups$rkeep, dups$frkeep)],
@@ -324,7 +337,7 @@ drawone <-
         segcolprt <- rcol[dups$frkeep]
       }
       else {
-        segcolprt <- linesegcolor[dups$frkeep]
+        segcolprt <- pdf.fg
       }
       #segments for dups
       if (length(dups$frkeep) > 0) {
@@ -332,6 +345,13 @@ drawone <-
                  x2[dups$fykeep],
                  llab[dups$frkeep],
                  col = segcolprt)
+
+        if (rsegcol) {
+          segcolprt <- rcol[dups$frkeep]
+        }
+        else {
+          segcolprt <- linesegcolor[dups$frkeep]
+        }
 
         #connect across chromosome
         segments(x1[dups$frkeep],
@@ -364,7 +384,7 @@ drawone <-
             llab[dups$rkeep]
           )))),
           setdiff(y, (llab[dups$rkeep])),
-          col = linesegcolor[dups$rkeep]
+          col = linesegcolor[match(setdiff(y, (llab[dups$rkeep])), df$position)]
         )
       }
 
@@ -386,13 +406,11 @@ drawone <-
 
     } # end don't do this for density map
     else {
-      segments(
-        rep(x1[1], length.out = length(y)),
-        y,
-        rep(x2[1], length.out = length(y)),
-        y,
-        col = linesegcolor
-      )
+      segments(rep(x1[1], length.out = length(y)),
+               y,
+               rep(x2[1], length.out = length(y)),
+               y,
+               col = linesegcolor)
     }
 
     # figure locus labwidth to pass back for connecting markers

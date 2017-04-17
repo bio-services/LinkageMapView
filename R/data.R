@@ -20,3 +20,18 @@
 #'      }
 #'
 "oat"
+#'
+#' a carrot comparative linkage map data frame
+#' kindly provided by Massimo Iorizzo:
+#' Cavagnaro et al. BMC Genomics 2014, 15:1118
+#'
+#' Contains the following columns:
+#'      \enumerate{
+#'        \item group - This will be the title for the linkage
+#'              group unless overridden.
+#'        \item position - must be in numerical order ascending within
+#'              linkage group name.
+#'        \item locus - marker name at this position.
+#'      }
+#'
+"carrot"

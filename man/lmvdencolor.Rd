@@ -34,21 +34,21 @@ for the highest density.  Default is:
 rev(colorRampPalette(RColorBrewer::brewer.pal(8, "Spectral"))(25))}
 }
 \value{
-a data frame that can be used as sectcoldf input on the lmv
+a data frame that can be used as sectcoldf input on the lmv.linkage.plot
        function to color the chromosome for a density map.
 }
 \description{
 lmvdencolor is a helper function which you can use to create a data frame
-of colors to be used as the sectcoldf input parameter on the lmv command.
+of colors to be used as the sectcoldf input parameter on the lmv.linkage.plot command.
 The colors will be used to color the linkage group based on the density
 of position/marker.This function is called with default values when the
-denmap = TRUE parameter is specified for lmv and no sectcoldf parameter
+denmap = TRUE parameter is specified for lmv.linkage.plot and no sectcoldf parameter
 is found.
 }
 \examples{
 
 # add a column to a linkage group data frame to specify colors for
-# line segments in lmv plot using default colors from RColorBrewer
+# line segments in lmv.linkage.plot using default colors from RColorBrewer
 # Spectral palette.  Then just plot the returned colors out to see how
 # they look.
 
@@ -64,6 +64,6 @@ image(seq_along(oat[,2]), 1, as.matrix(seq_along(oat[,2])),
 \seealso{
 \code{\link[grDevices]{colorRamp}}
 
-\code{\link{lmv}}
+\code{\link{lmv.linkage.plot}}
 }
 

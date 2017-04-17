@@ -1,0 +1,283 @@
+---
+title: "LinkageMapView Examples"
+author: "Lisa A. Ouellette"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LinkageMapView Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r, echo = FALSE} 
+knitr::opts_chunk$set(collapse=TRUE,comment="#>")
+```
+
+## Introduction
+
+The **LinkageMapView** package produces linkage group maps and QTL maps from a variety of
+inputs.  The output is a portable document format (pdf) and publication ready.
+
+There are many options for customizing the maps which will be reviewed in this vignette.  
+
+## Input 
+
+### Linkage group positions and loci names
+
+The first argument, **mapthis**, can be one of the following:
+
+- a file name.  The file can be a text file or a comma delimited file.  The first
+three columns should be in this order:
+    - linkage group name - character
+    - position - numeric
+    - locus name at this position - character
+- a dataframe with columns as described above.
+- a cross object from the **qtl** package.  
+    
+A dataframe example:
+```{r}
+library(LinkageMapView)
+data(carrot)
+carrot[1:5,]
+```
+A cross object from the **qtl** package example:
+```{r}
+library(qtl)
+data(hyper)
+class(hyper)
+summary(hyper)
+```
+
+The **mapthese** parameter is a vector of linkage groups from the input that you wish to print.  The default 
+prints all linkage groups in the input. You can print linkage groups in any order and you can print linkage groups more than once.  
+
+## pdf options
+
+The following pdf options can be specified and will be passed through to the pdf device.
+
+- pdf.family - the font family for all text. Default is "Helvetica".
+- pdf.fg - the foreground color (lines and text).  Default is "black".
+- pdf.bg - the background color.  Default is "transparent".
+- pdf.pointsize - default is 12.  
+- pdf.title - the title for a pdf ONLY appears in the metadata and does not appear in the output itself.  See main.
+- pdf.width - width of the output file in inches.
+- pdf.height - height of the output file in inches.
+
+Note that pdf.width and pdf.height, if not specified, will be calculated and the pdf size
+necessary to print requested linkage groups will be used.
+
+Continuing with the hyper cross object loaded above from the qtl package:
+
+```{r}
+ outfile = paste(tempdir(),"/hyper.pdf",sep="")
+ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15))
+```
+```{r, out.width = "680px",echo=FALSE}
+knitr::include_graphics("hyper_default.jpg")
+```
+
+## Position and Locus Format Options
+
+If more than one locus name appears at the same position, the label is
+indented slightly to catch your eye.  The parameter **maxcolsfordups** determines
+how many loci names will print on one line before going to subsequent lines. The 
+default is 3.  When multiple lines are required for all the labels at the same position,
+the labels are joined by a vertical line. 
+
+The **roundpos** parameter, which defaults to 1, specifies how many positions 
+after the decimal point should be printed for the locus position.
+
+Another parameter for handling multiple loci at the same position, is **dupnbr**. 
+If TRUE, only the first locus name at a position will print with, "## more" afterwards,
+indicating the number of duplicate locus names at that position:
+
+```{r}
+ outfile = paste(tempdir(),"/hyper_dupnbr.pdf",sep="")
+ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),dupnbr = TRUE)
+```
+```{r, out.width = "680px",echo=FALSE}
+knitr::include_graphics("hyper_dupnbr.jpg")
+```
+
+There is another parameter, **showonly**, which can be used to specify the
+locus names to be printed.  All other locus names and positions will not be 
+printed.  The next example will demonstrate the use of the showonly parameter
+along with loci and position formatting options.  By default the positions print
+to the left of the linkage group and so the position format options begin with 
+an 'l'.  And by default the loci print to the right of the linkage group and so the 
+loci format options begin with an 'r': 
+
+- lcex - Default is par("cex")
+- lcol - Default is par("col")
+- lfont - Default is par("font")
+- rcex - Default is par("cex")
+- rcol - Default is par("col")
+- rfont - Default is par("font")
+
+See help for par, `?par`, for a full description of these defaults.
+
+In this example we will show only one locus per linkage group.  The positions and locus will be 
+printed at twice the normal magnification (lcex=2 and rcex=2), the positions will 
+be green, the loci red, and the position font will be bold (2) and the loci font
+will be italic (3).
+```{r}
+ outfile = paste(tempdir(),"/hyper_showonly.pdf",sep="")
+ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),lcol="green",lcex=2,lfont=2,
+     rcol="red",rcex=2,rfont=3,
+     showonly=c("D1Mit123","D4Mit80","D6Mit135","D15Mit156"))
+```
+```{r, out.width = "680px",echo=FALSE}
+knitr::include_graphics("hyper_showonly.jpg")
+```
+Lines are still drawn across the linkage group to indicate all locus positions 
+even though the labels are not shown. Note that the color of the line across 
+the linkage group and to the loci name defaults to the color of the loci name. 
+This default can be changed with **rsegcol**=FALSE which indicates the line across
+the linkage group and to the loci name should be the pdf.fg color instead. 
+
+## Main Title and Linkage Group Titles 
+
+The **main** parameter is used for a title for the entire drawing and defaults
+to NULL.  By default, each linkage group name is printed above the linkage group. 
+To turn off linkage group names printing use **prtlgtitles=FALSE**.  You can 
+override the linkage group names to be printed by using the **lgtitles** parameter.
+The magnification, font and color of the linkage group titles and the main title
+can be adjusted with the following parameters:
+
+- cex.lgtitle - Default is par("cex.main")
+- cex.main - Default is par("cex.main")
+- col.lgitle - Default is par("col.main")
+- col.main - Default is par("col.main")
+- font.lgtitle  - Default is par("font.main")
+- font.main - Default is par("font.main")
+
+```{r}
+ outfile = paste(tempdir(),"/hyper_titles.pdf",sep="")
+ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),col.lgtitle = "blue",cex.lgtitle=2,
+     col.main = "red",main="Overall Title for the Output Map")
+```
+```{r, out.width = "680px",echo=FALSE}
+knitr::include_graphics("hyper_titles.jpg")
+```
+
+## Quantitative Trait Loci (QTL) input
+
+There are two different ways to input QTL.  
+
+1. **qtldf** = a dataframe containing these columns:
+
+- chr - Linkage group name for QTL.
+- qtl - Name (label) for QTL.
+- so  - Start of outer interval. Numeric.
+- si  - Start of inner interval. Numeric.
+- ei  - End of inner interval. Numeric.
+- eo  - End of outer interval. Numeric.
+- col -  Color for QTL.
+
+2. **qtlscanone** = scanone object from package r/qtl. If provided, all QTLs in the dataframe will be drawn by calculating their start and end with the r/qtl function bayesint with defaults.
+
+The next example demonstrates several features in addition to **qtldf**.  If you wish
+to use different colors or formats for different loci labels you can do so with the 
+**markerformatlist** parameter, providing a list of loci and their desired format options.
+If you specify **ruler**=TRUE the positions will not be printed.  Instead a vertical axis,
+or ruler, will be drawn on the left side of the page.  You may also reverse the positions
+on a linkage group.  Specify a vector of linkage group names using the **revthese** parameter. 
+The 'chromosome' has various format options as well:
+
+- **lg.col** - color for the inside of the chromosome.  The default is pdf.bg.
+- **lgw** - width of chromosome in inches.  Default is 0.25 inches.
+- **lg.lwd** - linkage group linewidth. The width of the line around the chromosome.  Defaults to par("lwd").
+
+```{r}
+## plot a carrot comparative linkage map
+## kindly provided by Massimo Iorizzo:
+## Cavagnaro et al. BMC Genomics 2014, 15:1118
+data(carrot)
+# make a df to pass qtl info
+qtldf <- data.frame(
+  chr = character(),
+  qtl = character(),
+  so = numeric(),
+  si = numeric(),
+  ei = numeric(),
+  eo = numeric(),
+  col = character(),
+  stringsAsFactors = FALSE
+)
+qtldf <- rbind(qtldf,
+               data.frame(
+                 chr = "70349LG3",
+                 qtl = "RTPE-Q1",
+                 so = 36.6,
+                 si = 37,
+                 ei = 37,
+                 eo = 38,
+                 col="red"
+               ))
+# make a list to pass label options
+flist <- list()
+locus <- c("BSSR-094", "K0149", "K0627", "K2161", "ESSR-087", "ESSR-057")
+font  <- c(2)   #bold
+flist[[1]] <- list(locus = locus, font = font)
+locus <- c("F3H", "FLS1")
+font  <- c(4)   #bold italic
+flist[[2]] <- list(locus = locus, font = font)
+locus <- c("P3", "P1", "Raa1")
+font  <- c(3)   #italic
+col <- c("red")
+flist[[3]] <- list(locus = locus, font = font, col = col)
+
+outfile = paste(tempdir(),"/carrot.pdf",sep="")
+lmv.linkage.plot(
+  carrot,
+  outfile = outfile,
+  ruler = TRUE,
+  lgtitle = c("2170", "70349", "10117"),
+  maxnbrcolsfordups = 2,
+  markerformatlist = flist,
+  lg.col = "lightblue1",
+  pdf.height = 16,
+  pdf.width = 10,
+  revthese = c("70349LG3"),
+  qtldf=qtldf
+)
+
+```
+```{r, out.width = "500px",echo=FALSE}
+knitr::include_graphics("carrot.jpg")
+```
+
+
+## Density Maps and Ruler Customization
+
+The last example will illustrate producing a density map.  There is a helper function,
+`?lmvdencolor` which you may use to provide your own color palette, window size and color
+bias.  In this example the defaults are accepted and the **denmap**=TRUE parameter is 
+specified.  In addition, this example customizes the ruler (y axis).  
+```{r}
+## do a density map with default colors and customize the axis
+data(oat)
+
+## draw tickmarks at each cM from 0 to largest position of linkage groups to be drawn
+maxpos <- floor(max(oat$Position[oat$Group == "Mrg01" | oat$Group == "Mrg02"]))
+at.axis <- seq(0, maxpos)
+
+## put labels on ruler at every 10 cM
+axlab <- vector()
+      for (lab in 0:maxpos) {
+        if (!lab %% 10) {
+          axlab <- c(axlab, lab)
+        }
+        else {
+          axlab <- c(axlab, NA)
+        }
+      }
+
+outfile = paste(tempdir(),"/oat_denmap.pdf",sep="")
+lmv.linkage.plot(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE, cex.axis = 1, at.axis = at.axis, labels.axis = axlab)
+```
+
+```{r, out.width = "120px",echo=FALSE}
+knitr::include_graphics("oat_denmap.jpg")
+```
+
+

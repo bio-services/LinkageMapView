@@ -1,11 +1,9 @@
 #' LinkageMapView: A package for plotting linkage group maps and QTLs
 #'
-#' The LinkageMapView package provides one external function: lmv
-#'
 #' LinkageMapView produces high resolution, publication ready linkage maps and QTL maps.
 #'
 #' There are many optional parameters to format the output pdf.
-#' Please see the help for function lmv for a full description of
+#' Please see the help for function lmv.linkage.plot for a full description of
 #' each parameter and examples.
 #'
 #' @docType package
