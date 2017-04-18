@@ -68,7 +68,7 @@ necessary to print requested linkage groups will be used.
 Continuing with the hyper cross object loaded above from the qtl package:
 
 ```{r}
- outfile = paste(tempdir(),"/hyper.pdf",sep="")
+ outfile = file.path(tempdir(), "hyper.pdf")
  lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15))
 ```
 ```{r, out.width = "680px",echo=FALSE}
@@ -91,7 +91,7 @@ If TRUE, only the first locus name at a position will print with, "## more" afte
 indicating the number of duplicate locus names at that position:
 
 ```{r}
- outfile = paste(tempdir(),"/hyper_dupnbr.pdf",sep="")
+ outfile = file.path(tempdir(), "hyper_dupnbr.pdf")
  lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),dupnbr = TRUE)
 ```
 ```{r, out.width = "680px",echo=FALSE}
@@ -120,7 +120,7 @@ printed at twice the normal magnification (lcex=2 and rcex=2), the positions wil
 be green, the loci red, and the position font will be bold (2) and the loci font
 will be italic (3).
 ```{r}
- outfile = paste(tempdir(),"/hyper_showonly.pdf",sep="")
+ outfile = file.path(tempdir(), "hyper_showonly.pdf")
  lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),lcol="green",lcex=2,lfont=2,
      rcol="red",rcex=2,rfont=3,
      showonly=c("D1Mit123","D4Mit80","D6Mit135","D15Mit156"))
@@ -151,7 +151,7 @@ can be adjusted with the following parameters:
 - font.main - Default is par("font.main")
 
 ```{r}
- outfile = paste(tempdir(),"/hyper_titles.pdf",sep="")
+ outfile = file.path(tempdir(), "hyper_titles.pdf")
  lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),col.lgtitle = "blue",cex.lgtitle=2,
      col.main = "red",main="Overall Title for the Output Map")
 ```
@@ -226,7 +226,7 @@ font  <- c(3)   #italic
 col <- c("red")
 flist[[3]] <- list(locus = locus, font = font, col = col)
 
-outfile = paste(tempdir(),"/carrot.pdf",sep="")
+outfile = file.path(tempdir(), "carrot.pdf")
 lmv.linkage.plot(
   carrot,
   outfile = outfile,
@@ -272,7 +272,7 @@ axlab <- vector()
         }
       }
 
-outfile = paste(tempdir(),"/oat_denmap.pdf",sep="")
+outfile = file.path(tempdir(), "oat_denmap.pdf")
 lmv.linkage.plot(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE, cex.axis = 1, at.axis = at.axis, labels.axis = axlab)
 ```
 
