@@ -71,7 +71,7 @@ outfile = file.path(tempdir(), "hyper.pdf")
 lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15))
 ```
 ```{r, out.width = "680px",echo=FALSE}
-knitr::include_graphics("hyper_default.jpg")
+knitr::include_graphics("hyper.png")
 ```
 
 ## Position and Locus Format Options
@@ -94,7 +94,7 @@ outfile = file.path(tempdir(), "hyper_dupnbr.pdf")
 lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),dupnbr = TRUE)
 ```
 ```{r, out.width = "680px",echo=FALSE}
-knitr::include_graphics("hyper_dupnbr.jpg")
+knitr::include_graphics("hyper_dupnbr.png")
 ```
 
 There is another parameter, **showonly**, which can be used to specify the
@@ -125,7 +125,7 @@ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),lcol="green",lcex=2,lfont=2,
     showonly=c("D1Mit123","D4Mit80","D6Mit135","D15Mit156"))
 ```
 ```{r, out.width = "680px",echo=FALSE}
-knitr::include_graphics("hyper_showonly.jpg")
+knitr::include_graphics("hyper_showonly.png")
 ```
 Lines are still drawn across the linkage group to indicate all locus positions 
 even though the labels are not shown. Note that the color of the line across 
@@ -155,7 +155,7 @@ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),col.lgtitle = "blue",cex.lgt
     col.main = "red",main="Overall Title for the Output Map")
 ```
 ```{r, out.width = "680px",echo=FALSE}
-knitr::include_graphics("hyper_titles.jpg")
+knitr::include_graphics("hyper_titles.png")
 ```
 
 ## Quantitative Trait Loci (QTL) input
@@ -242,7 +242,7 @@ lmv.linkage.plot(
 
 ```
 ```{r, out.width = "500px",echo=FALSE}
-knitr::include_graphics("carrot.jpg")
+knitr::include_graphics("carrot.png")
 ```
 
 
@@ -276,5 +276,5 @@ lmv.linkage.plot(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE, cex.axis =
 ```
 
 ```{r, out.width = "120px",echo=FALSE}
-knitr::include_graphics("oat_denmap.jpg")
+knitr::include_graphics("oat_denmap.png")
 ```
