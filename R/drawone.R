@@ -156,7 +156,7 @@ drawone <-
           min = min(yrange),
           max = max(yrange),
           cex = rcex[dups$rkeep],
-          maxiter = 99999
+          maxiter = 999999
         )
 
       }

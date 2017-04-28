@@ -284,7 +284,7 @@ lmv.linkage.plot is the main function to produce linkage group maps and has many
 
 library(qtl)
 data(hyper)
-outfile = paste(tempdir(),"/hyper.pdf",sep="")
+outfile = file.path(tempdir(), "hyper.pdf")
 lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15))
 
 ## color some of the markers for emphasis
@@ -298,7 +298,7 @@ locus <- c("D1Mit123","D1Mit105","D6Mit273","D15Mit56","D15Mit156")
 col   <- c("red")
 flist[[1]] <- list(locus=locus,col=col)
 
-outfile = paste(tempdir(),"/hyperred.pdf",sep="")
+outfile = file.path(tempdir(), "hyperred.pdf")
 lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),markerformatlist=flist)
 
 ## change some of the pdf options and chromosome color
@@ -308,7 +308,7 @@ lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),markerformatlist=flist)
 library(qtl)
 data(hyper)
 
-outfile = paste(tempdir(),"/hyperlg.pdf",sep="")
+outfile = file.path(tempdir(), "hyperlg.pdf")
 lmv.linkage.plot(hyper,outfile,
 mapthese=c(1,4,6,15),
 pdf.bg="black",pdf.fg="white",col.lgtitle="white",
@@ -319,7 +319,7 @@ pdf.height=8,pdf.title="myhyper",lg.col="tan")
 library(qtl)
 data(hyper)
 
-outfile = paste(tempdir(),"/hypercol.pdf",sep="")
+outfile = file.path(tempdir(), "hypercol.pdf")
 lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),
 lcol="blue",lfont=2,lcex=1.2,rcol="red",rfont=3,rcex=2)
 
@@ -337,7 +337,7 @@ e = c(94,47,21.9,13.1)
 col = c("pink","blue","blue","green")
 sectcoldf <-  data.frame(chr, s, e, col,stringsAsFactors = FALSE)
 
-outfile = paste(tempdir(),"/hyperruler.pdf",sep="")
+outfile = file.path(tempdir(), "hyperruler.pdf")
 lmv.linkage.plot(hyper,outfile,mapthese=c(1,4,6,15),
 ruler=TRUE,maxnbrcolsfordups = 1, sectcoldf=sectcoldf)
 
@@ -355,7 +355,7 @@ hyper <-
                stepwidth = "fixed")
 hyper.scanone <- scanone(hyper)
 
-outfile = paste(tempdir(),"/testrqtlhyper2.pdf",sep="")
+outfile = file.path(tempdir(), "testrqtlhyper2.pdf")
 lmv.linkage.plot(hyper,
    outfile, mapthese=c(1,4,6,7,15),
    qtlscanone = hyper.scanone,
@@ -399,7 +399,7 @@ font  <- c(3)   #italic
 col <- c("red")
 flist[[3]] <- list(locus = locus, font = font, col = col)
 filename <- system.file("extdata", "Carrot.csv", package="LinkageMapView")
-outfile = paste(tempdir(),"/carrot.pdf",sep="")
+outfile = file.path(tempdir(), "carrot.pdf")
 lmv.linkage.plot(
   mapthis = filename,
   outfile = outfile,
@@ -417,14 +417,14 @@ lmv.linkage.plot(
 ## do a density map with default colors
 data(oat)
 
-outfile = paste(tempdir(),"/oat_Mrg01.pdf",sep="")
+outfile = file.path(tempdir(), "oat_Mrg01.pdf")
 lmv.linkage.plot(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE)
 
 
 ## do a density map and provide your own colors with lmvdencolor helper
 data(oat)
 ##
-outfile = paste(tempdir(),"/oat_Mrg01_YlGn.pdf",sep="")
+outfile = file.path(tempdir(), "oat_Mrg01_YlGn.pdf")
 
 sectcoldf <- lmvdencolor(oat,colorin =
 colorRampPalette(RColorBrewer::brewer.pal(8, "YlGn"))(5))
