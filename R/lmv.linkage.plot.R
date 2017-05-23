@@ -335,6 +335,7 @@
 #'    qtlscanone = hyper.scanone,
 #'    posonleft = c(TRUE,FALSE,TRUE,FALSE,TRUE))
 #'
+#' \dontrun{
 #' ## plot a carrot comparative linkage map
 #' ## kindly provided by Massimo Iorizzo:
 #' ## Cavagnaro et al. BMC Genomics 2014, 15:1118
@@ -391,7 +392,7 @@
 #'   revthese = c("70349LG3"),
 #'   qtldf=qtldf
 #' )
-#'
+#' }
 #'
 #' ## do a density map with default colors
 #' data(oat)
@@ -399,7 +400,7 @@
 #' outfile = file.path(tempdir(), "oat_Mrg01.pdf")
 #' lmv.linkage.plot(oat,outfile,mapthese=c("Mrg01","Mrg02"),denmap=TRUE)
 #'
-#'
+#' \dontrun{
 #' ## do a density map and provide your own colors with lmvdencolor helper
 #' data(oat)
 #' ##
@@ -409,6 +410,7 @@
 #' colorRampPalette(RColorBrewer::brewer.pal(8, "YlGn"))(5))
 #'
 #' lmv.linkage.plot(oat,outfile,denmap=TRUE,sectcoldf=sectcoldf)
+#' }
 
 
 lmv.linkage.plot <- function(mapthis,
