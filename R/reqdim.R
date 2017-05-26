@@ -174,7 +174,7 @@ reqdim <- function(df,
   }
 
   # give a margin at top and bottom for chromosome ends and margins
-  reqheight = reqheight + lgw + par("mai")[1] + par("mai")[3] + par("omi")[1] + par("omi")[3]
+  reqheight = reqheight + lgw + par("mai")[1] + par("mai")[3]
 
   list(
     reqwidth = reqwidth,
