@@ -104,7 +104,7 @@ lmvdencolor <- function(df,
       chr[dfix] <- mapthese[i]
       s[dfix] <- k - sectsize / 2
       # if < 1 sectionleft to end go to end
-      if ((k + (sectsize * 3)) > max(thislg)) {
+      if ((k + (sectsize/2 * 3)) > max(thislg)) {
         e[dfix] <- max(thislg)
       }
       else {
@@ -119,6 +119,13 @@ lmvdencolor <- function(df,
                                       thislg >= (k - wsize / 2)))
       }
       else {
+        # means we have a window size region with no markers
+        # so cM/locus is infinity
+        message(c("There are sections of linkage group ", mapthese[i],
+                  " with no markers found between ",
+                  k - wsize / 2, " and ",  k + wsize / 2,". Your window size is ", wsize, "."))
+        message("These sections will be colored at the highest density.")
+        message("Or use function lmvdencolor to set an alternative window size. ")
         dens[dfix] <- NA  # will set to 1 after scaling
       }
       col[dfix] = "default"
