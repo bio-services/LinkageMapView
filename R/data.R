@@ -1,4 +1,4 @@
-#' oat consensus map data frame linkage group Mrg01
+#' oat consensus map data frame
 #'
 #' Chaffin, A. S., Y. Huang, S. Smith, W. A. Bekele, E. Babiker, B. N. Gnanesh,
 #' B. J. Foresman, S. G. Blanchard, J. J. Jay, R. W. Reid, C. P. Wight, S. Chao,
