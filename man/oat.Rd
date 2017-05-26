@@ -3,7 +3,7 @@
 \docType{data}
 \name{oat}
 \alias{oat}
-\title{oat consensus map data frame linkage group Mrg01}
+\title{oat consensus map data frame}
 \format{An object of class \code{data.frame} with 16668 rows and 3 columns.}
 \usage{
 oat

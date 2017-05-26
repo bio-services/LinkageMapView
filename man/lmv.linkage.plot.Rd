@@ -22,8 +22,7 @@ lmv.linkage.plot(mapthis, outfile, mapthese = NULL, at.axis = NULL,
   prtlgtitles = TRUE, qtldf = NULL, revthese = NULL, rcex = par("cex"),
   rcol = par("col"), rfont = par("font"), roundpos = 1, rsegcol = TRUE,
   ruler = FALSE, sectcoldf = NULL, segcol = NULL, qtlscanone = NULL,
-  showonly = NULL, units = "cM", ylab = paste("Density (", units, ")", sep
-  = ""))
+  showonly = NULL, units = "cM", ylab = units)
 }
 \arguments{
 \item{mapthis}{Required, either a 'cross' object from r/qtl, a csv or txt
@@ -271,7 +270,7 @@ value provided is only used for a ruler (y axis) title and the density
 map legend text.}
 
 \item{ylab}{Optional.  Title for the y-axis (ruler).  The default value is
-"Density (<units>)"  See units parameter.}
+units.  See units parameter.}
 }
 \description{
 lmv.linkage.plot is the main function to produce linkage group maps and has many
