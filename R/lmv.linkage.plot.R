@@ -247,7 +247,7 @@
 #'        map legend text.
 #'
 #' @param ylab Optional.  Title for the y-axis (ruler).  The default value is
-#'        "Density (<units>)"  See units parameter.
+#'        units.  See units parameter.
 #'
 #' @export
 #'
@@ -469,8 +469,8 @@ lmv.linkage.plot <- function(mapthis,
                 qtlscanone = NULL,
                 showonly = NULL,
                 units = "cM",
-                ylab = paste("Density (",units,")",sep=""))
-
+                ylab = units
+                )
 
 {
   pgx <- 0.5   # where on page x-axis to draw
@@ -899,10 +899,10 @@ lmv.linkage.plot <- function(mapthis,
     #    calculate relative widths of plot areas
     #    and y range for all to be mapped
 
-    # give a little for left and right margin first
+    # give a little for left so linkage group not next to ruler
 
     dim[[fromlg]]$reqwidth <-
-      dim[[fromlg]]$reqwidth + 0.5
+      dim[[fromlg]]$reqwidth + 0.3
  #   dim[[tolg]]$reqwidth <-
 #    dim[[tolg]]$reqwidth + 0.3
 
@@ -926,9 +926,6 @@ lmv.linkage.plot <- function(mapthis,
     relheight <- vector(length = nbrrows)
   }
 
-  message(c("Required pdf.width = ", allrowwidth))
-  message(c("Required pdf.height = ", allrowheight))
-
   # determine relative height of each row for layout
 
 
@@ -945,6 +942,10 @@ lmv.linkage.plot <- function(mapthis,
     relheight[nr] <- maxrowheight / allrowheight
   }
 
+  # add in margins
+  allrowwidth <- allrowwidth + par("mai")[2] + par("mai")[4] + par("omi")[2] + par("omi")[4]
+  allrowheight <- allrowheight + par("omi")[2] + par("omi")[4]
+
   # if user did not specify size, set to required size
   if (is.null(pdf.width)) {
     pdf.width <- ceiling(allrowwidth)
@@ -952,6 +953,9 @@ lmv.linkage.plot <- function(mapthis,
   if (is.null(pdf.height)) {
     pdf.height <- ceiling(allrowheight)
   }
+
+  message(c("Required pdf.width = ", allrowwidth))
+  message(c("Required pdf.height = ", allrowheight))
 
   message(c("Using pdf.width = ", pdf.width))
   message(c("Using pdf.height = ", pdf.height))
@@ -1018,6 +1022,7 @@ lmv.linkage.plot <- function(mapthis,
         "Rendered by LinkageMapView",
         side = 1,
         cex = 0.5,
+        outer=TRUE,
         col = pdf.fg,
         adj = 0
       )
@@ -1373,8 +1378,9 @@ lmv.linkage.plot <- function(mapthis,
   if (denmap &
       !is.null(sectcoldf$dens)) {
     # plot legend is last row
-    leg <- sectcoldf[order(sectcoldf$dens), ]
-    if (max(leg$dens > 100)) {
+    # na.last removes NAs
+    leg <- sectcoldf[order(sectcoldf$dens,na.last=NA), ]
+    if (max(leg$dens) > 100) {
       leg$dens <- round(leg$dens, digits = 0)
     }
     else {
@@ -1406,6 +1412,7 @@ lmv.linkage.plot <- function(mapthis,
       xlab = paste("Density (", units, "/Locus)", sep = ""),
       names = bplotdens,
       cex.names = .75,
+      las = 2,
       cex.lab = .75
     )
 
