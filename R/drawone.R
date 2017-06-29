@@ -416,14 +416,15 @@ drawone <-
     # figure locus labwidth to pass back for connecting markers
     # and for drawing qtls
 
-    yrlabwidth <- vector(length = length(llab))
+
     if (denmap) {
-      yrlabwidth <- strwidth("M", units = "inches")
+      yrlabwidth <- rep(strwidth("M", units = "inches"),length(y))
       adjyr <- y
       adjyl <- y
       dups <- NULL
     }
     else {
+      yrlabwidth <- vector(length = length(llab))
       yrlabwidth[setdiff(dups$rkeep, dups$frkeep)] <-
         strwidth(rlab[setdiff(dups$rkeep, dups$frkeep)], units = "inches") *
         rcex[setdiff(dups$rkeep, dups$frkeep)] + labdist
