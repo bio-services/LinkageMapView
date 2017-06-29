@@ -1,7 +1,7 @@
 Package: LinkageMapView
 Type: Package
 Title: Plot Linkage Group Maps with Quantitative Trait Loci
-Version: 2.1.0
+Version: 2.1.1
 Authors@R: person("Lisa", "Ouellette", email = "louellet@uncc.edu", role = c("aut", "cre"))
 Description: Produces high resolution, publication ready linkage maps
     and quantitative trait loci maps. Input can be output from 'R/qtl',
