@@ -66,4 +66,3 @@ image(seq_along(oat[,2]), 1, as.matrix(seq_along(oat[,2])),
 
 \code{\link{lmv.linkage.plot}}
 }
-

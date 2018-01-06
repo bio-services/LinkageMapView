@@ -1,0 +1,14 @@
+citEntry(entry="Article",
+        title="LinkageMapView - Rendering High Resolution Linkage and QTL Maps",
+        author = personList(as.person("Lisa A. Ouellette"),
+        as.person("Robert W. Reid"),
+        as.person("Steven G. Blanchard, Jr."),
+        as.person("Cory R. Brouwer")
+        ),
+        journal="Bioinformatics",
+        year = "2018",
+        volume = "34",
+        number = "2",
+        pages ="306-307",
+        url="https://doi.org/10.1093/bioinformatics/btx576",
+        textVersion = paste("Lisa A. Ouellette, Robert W. Reid, Steven G. Blanchard, Jr., Cory R. Brouwer (2017).","LinkageMapView - Rendering High Resolution Linkage and QTL Maps.","Bioinformatics, 34(2), 306-307.", "URL https://doi.org/10.1093/bioinformatics/btx576"))

@@ -432,4 +432,3 @@ colorRampPalette(RColorBrewer::brewer.pal(8, "YlGn"))(5))
 lmv.linkage.plot(oat,outfile,denmap=TRUE,sectcoldf=sectcoldf)
 }
 }
-
