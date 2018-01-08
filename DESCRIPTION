@@ -13,13 +13,13 @@ BugReports: https://github.com/louellette/LinkageMapView/issues
 License: GPL-3
 LazyData: TRUE
 Imports:
+    qtl (>= 1.39-5),
     plotrix (>= 3.6-3),
     grDevices,
     graphics,
     utils,
     RColorBrewer
 Suggests:
-    qtl (>= 1.39-5),
     rmarkdown,
     testthat,
     knitr
