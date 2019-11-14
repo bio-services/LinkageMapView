@@ -16,7 +16,7 @@ library(devtools)
 
 ### Then to install LinkageMapView:
 ```R
-devtools:: install_github("louellette/LinkageMapView",build_vignettes=TRUE)
+devtools::install_github("bio-services/LinkageMapView", build_vignettes=TRUE)
 ```
 
 ### Once installed:
