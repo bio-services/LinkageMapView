@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^LICENSE$
 ^data-raw$
+^packrat/
+^\.Rprofile$
