@@ -4,8 +4,12 @@
 \alias{lmvdencolor}
 \title{LinkageMapView density color function}
 \usage{
-lmvdencolor(df, wsize = 30, bias = 5,
-  colorin = colorRampPalette(RColorBrewer::brewer.pal(8, "Spectral"))(25))
+lmvdencolor(
+  df,
+  wsize = 30,
+  bias = 5,
+  colorin = colorRampPalette(RColorBrewer::brewer.pal(8, "Spectral"))(25)
+)
 }
 \arguments{
 \item{df}{Required, a data frame with the first two columns in this order:

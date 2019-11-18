@@ -2,3 +2,7 @@ inst/doc
 .Rproj.user
 .Rhistory
 .RData
+.Rprofile
+packrat
+packrat/lib*/
+packrat/src/

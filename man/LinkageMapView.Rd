@@ -3,7 +3,6 @@
 \docType{package}
 \name{LinkageMapView}
 \alias{LinkageMapView}
-\alias{LinkageMapView-package}
 \title{LinkageMapView: A package for plotting linkage group maps and QTLs}
 \description{
 LinkageMapView produces high resolution, publication ready linkage maps and QTL maps.
