@@ -62,7 +62,7 @@ lmvdencolor <- function(df,
                         bias = 5,
                         colorin = colorRampPalette(RColorBrewer::brewer.pal(8, "Spectral"))(25)) {
   editlgdf(df)
-  mapthese <- unique(df[, 1])
+  mapthese <- as.character(unique(df[, 1]))
 
   chr <- vector(mode = "character")
   s <- vector(mode = "double")
